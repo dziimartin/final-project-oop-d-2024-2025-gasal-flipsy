@@ -2,49 +2,146 @@
 # Laporan Akhir Final Project OOP D
 
 ## 1. Informasi Umum
-* **Nama Game**: [Nama Game]
+* **Nama Game**: Flipsy
 * **Anggota Kelompok**:
-    1. [Nama - NRP]
-    2. [Nama - NRP]
-    3. [Nama - NRP]
-    4. [Nama - NRP]
-* **Tech Stack**: [Bahasa Pemrograman, Framework, Tools yang digunakan]
+    1. Jasmine Firdhousy Muslich - 5025231051
+    2. Lailatul Annisa Fitriana - 5025231202
+    3. Rosidah Darman - 5025231307
+    4. Dzikrina Hidayani Martin - 5025231311
+* **Tech Stack**: Java
 
 ## 2. Deskripsi Game
 
 ### 2.1 Konsep Game
-* **Genre**: 
-* **Gameplay/Rule**: 
-* **Objective**: 
-* **Single/Multi Player**: 
+* **Genre**: Puzzle/Card Matching Game
+* **Gameplay/Rule**: Player akan melihat kartu-kartu yang terbalik di layar. Setiap kartu punya pasangan yang serupa. Pemain harus mencocokkan dua kartu yang mirip hingga kartu habis. Jika player membalik dua kartu yang berbeda, kartu akan kembali tertutup. Jika player membalik kartu yang sama, maka kartu akan tetap terbuka.
+* **Objective**: Menemukan semua pasangan kartu dalam waktu sesingkat mungkin.
+* **Single/Multi Player**: Single Player
 
 ### 2.2 Fitur Utama
-1. [Fitur 1]
-2. [Fitur 2]
-3. [Fitur n]
+1. Save/Load System: fitur untuk menyimpan/melanjutkan game di lain waktu.
+2. Achievement System: pemain akan mendapat achievement untuk pencapaian tertentu (Contoh: tidak pernah membuka dua kartu yang tidak cocok, menyelesaikan game dalam waktu kurang dari 20 detik untuk level pertama, kurang dari 30 detik untuk level kedua, dan kurang dari 40 detik untuk level ketiga)
+3. Timer: menghitung waktu yang dihabiskan player untuk menyelesaikan permainan.
+4. Level Difficulty: tingkat kesulitan yang ditentukan dengan bertambahnya jumlah kartu seiring peningkatan level/kesulitan.
 
 ## 3. Implementasi Fitur Wajib
 
 ### 3.1 Save/Load System
-* **Implementasi**:
-* **Konsep OOP**:
+* **Implementasi**: menyimpan dan memuat data pemain ketika terakhir kali bermain.
+* **Konsep OOP**: menggunakan class `GameState` untuk merepresentasikan informasi save/load.
 * **Penerapan SOLID**:
+  1. Single Responsibility Principle: class `GameState` hanya berperan untuk menyimpan informasi status permainan 
 * **Design Pattern yang Digunakan**:
 * **Code Snippet**:
 ```
-[Code snippet here]
+// class yang merepresentasikan state permainan
+// mengimplementasikan interface Serializable untuk menyimpan status permainan dalam urutan byte yang nanti dimuat/dibaca kembali dengan cara dideserialisasi
+public class GameState implements Serializable {
+    private int score;
+    private int level;
+    
+    // constructor dan getter/setter
+    public GameState(int score, int level) {
+        this.score = score;
+        this.level = level;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+}
+
+// class yang punya single responsibility menyimpan GameState
+// IOException adalah exception yang terjadi saat ada masalah I/O (contoh: kesalahan saat open, read, write file)
+// try-with-resources akan otomatis menutup oos setelah menulis objek ke file sebagai byte stream
+public class GameStateSaver {
+    public void save(GameState state, String filename) throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(state);
+        }
+    }
+}
+
+// class yang hanya bertanggung jawab memuat GameState
+public class LoadGameState {
+    public GameState load(String filename) throws IOException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (GameState) ois.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Class tidak ditemukan", e);
+        }
+    }
+}
 ```
 
 ### 3.2 Achievement System
 * **Jenis Achievement**:
-    1. [Implementasi Achievement 1]
-    2. [Implementasi Achievement 2]
-* **Konsep OOP**:
+    1. Champion: menyelesaikan seluruh level yang ada.
+    2. Einstein: menyelesaikan level tanpa membuka kartu yang salah.
+    3. Turbo: menyelesaikan game di bawah 20 detik untuk level pertama, di bawah 30 detik untuk level kedua, dan di bawah 40 detik untuk level ketiga
+* **Konsep OOP**: menggunakan class `Achievement` yang di-inherit oleh class khusus untuk tiap jenis achievement.
 * **Penerapan SOLID**:
+  1. Single Responsibility Principle: Kelas achievement khusus hanya menangani satu achievement.
+  2. Liskov Substitution Principle: Objek achievement dapat diganti oleh setiap class yang meng-inherit objek achievement tanpa mengubah logika program.
 * **Design Pattern yang Digunakan**:
 * **Code Snippet**:
 ```
-[Code snippet here]
+public abstract class Achievement {
+    public abstract boolean isAchieved(GameState state);
+    public abstract String getAchievementName();
+}
+
+public class Champion extends Achievement {
+    @Override
+    public boolean isAchieved(GameState state) {
+        return state.isAllLevelsCompleted();
+    }
+
+    @Override
+    public String getAchievementName() {
+        return "Champion! Kamu menamatkan game ini, selamat!";
+    }
+}
+
+public class Einstein extends Achievement {
+    @Override
+    public boolean isAchieved(GameState state) {
+        return state.getMistakes() == 0;
+    }
+
+    @Override
+    public String getAchievementName() {
+        return "Jenius seperti Einstein! Kamu tidak melakukan kesalahan sama sekali!";
+    }
+}
+
+public class Turbo extends Achievement {
+    @Override
+    public boolean isAchieved(GameState state) {
+        // Memeriksa apakah pemain memenuhi salah satu kondisi waktu untuk mendapatkan Turbo achievement
+        return (state.getTimeElapsedLevel1() < 20) || 
+               (state.getTimeElapsedLevel2() < 30) || 
+               (state.getTimeElapsedLevel3() < 40);
+    }
+
+    @Override
+    public String getAchievementName() {
+        return "Turbo! Kamu sangat cepat!";
+    }
+}
+
 ```
 
 ## 4. Implementasi Fitur Lain
