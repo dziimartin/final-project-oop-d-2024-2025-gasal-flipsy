@@ -6,8 +6,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class GamePanel implements Panel {
-    private GameTimer gameTimer; // Timer untuk permainan
-    private JLabel timerLabel; // Label untuk menampilkan waktu
+    private GameTimer gameTimer; 
+    private JLabel timerLabel; 
     private Thread timerUpdaterThread; // Thread untuk update GUI
     private boolean running; // Flag untuk menghentikan thread
 
@@ -23,7 +23,7 @@ public class GamePanel implements Panel {
 
         // Panel atas untuk timer
         JPanel topPanel = new JPanel();
-        timerLabel = new JLabel("Time: 00:00");
+        timerLabel = new JLabel("Time: 00:00"); 
         topPanel.add(timerLabel);
         gamePanel.add(topPanel, BorderLayout.NORTH);
 
@@ -48,17 +48,13 @@ public class GamePanel implements Panel {
         startTimerUpdater(); 
     }
 
-    public void stopGame() {
-        stopTimer();
-        JOptionPane.showMessageDialog(null, "Permainan Selesai! Waktu akhir: " + getFinalTime() + " detik");
-    }
-
-    private void startTimerUpdater() {
+    public void startTimerUpdater() {
         // Menginisialisasi flag dan memulai thread updater
         running = true;
         timerUpdaterThread = new Thread(() -> {
             while (running && !Thread.currentThread().isInterrupted()) { 
                 SwingUtilities.invokeLater(() -> {
+                    // Update label timer di Swing thread
                     int minutes = gameTimer.getTimeInSeconds() / 60;
                     int seconds = gameTimer.getTimeInSeconds() % 60;
                     String formattedTime = String.format("%02d:%02d", minutes, seconds);
@@ -73,20 +69,6 @@ public class GamePanel implements Panel {
             }
         });
         timerUpdaterThread.start();
-    }
-
-    public void stopTimer() {
-        if (gameTimer != null) {
-            gameTimer.stop(); 
-        }
-        running = false; 
-        if (timerUpdaterThread != null) {
-            timerUpdaterThread.interrupt();  
-        }
-    }
-
-    public int getFinalTime() {
-        return gameTimer.getTimeInSeconds(); 
     }
 
     private void cardButtonClicked(ActionEvent e) {
