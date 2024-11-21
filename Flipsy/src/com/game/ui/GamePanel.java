@@ -1,15 +1,15 @@
 package com.game.ui;
 
-import com.game.core.GameTimer; 
+import com.game.core.GameTimer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class GamePanel implements Panel {
-    private GameTimer gameTimer;        // Timer untuk permainan
-    private JLabel timerLabel;          // Label untuk menampilkan waktu
-    private Thread timerUpdaterThread;  // Thread untuk update GUI
-    private boolean running;            // Flag untuk menghentikan thread
+    private GameTimer gameTimer; // Timer untuk permainan
+    private JLabel timerLabel; // Label untuk menampilkan waktu
+    private Thread timerUpdaterThread; // Thread untuk update GUI
+    private boolean running; // Flag untuk menghentikan thread
 
     public GamePanel() {
         this.gameTimer = new GameTimer(); // Inisialisasi GameTimer
@@ -23,8 +23,7 @@ public class GamePanel implements Panel {
 
         // Panel atas untuk timer
         JPanel topPanel = new JPanel();
-        timerLabel = new JLabel("Time: 0 seconds");
-        timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        timerLabel = new JLabel("Time: 00:00"); // Inisialisasi timer dengan format 00:00
         topPanel.add(timerLabel);
         gamePanel.add(topPanel, BorderLayout.NORTH);
 
@@ -35,21 +34,18 @@ public class GamePanel implements Panel {
         for (int i = 1; i <= 16; i++) {
             JButton cardButton = new JButton("?");
             cardButton.setFont(new Font("Arial", Font.BOLD, 20));
-            cardButton.addActionListener(this::cardButtonClicked); 
+            cardButton.addActionListener(this::cardButtonClicked);
             cardGrid.add(cardButton);
         }
 
         gamePanel.add(cardGrid, BorderLayout.CENTER);
 
-        // Inisialisasi dan mulai timer
-        startTimerUpdater();
-
         return gamePanel;
     }
 
     public void startGame() {
-        gameTimer.start(); 
-        startTimerUpdater(); 
+        gameTimer.start();  // Start the timer in GameTimer
+        startTimerUpdater(); // Start the timer update thread
     }
 
     public void stopGame() {
@@ -64,13 +60,16 @@ public class GamePanel implements Panel {
             while (running && !Thread.currentThread().isInterrupted()) { // Menambahkan pengecekan interrupt
                 SwingUtilities.invokeLater(() -> {
                     // Update label timer di Swing thread
-                    timerLabel.setText("Time: " + gameTimer.getTimeInSeconds() + " seconds");
+                    int minutes = gameTimer.getTimeInSeconds() / 60;
+                    int seconds = gameTimer.getTimeInSeconds() % 60;
+                    String formattedTime = String.format("%02d:%02d", minutes, seconds);
+                    timerLabel.setText("Time: " + formattedTime); // Update label dengan format mm:ss
                 });
                 try {
                     Thread.sleep(1000); // Update setiap detik
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); 
-                    break; 
+                    Thread.currentThread().interrupt();
+                    break;
                 }
             }
         });
@@ -79,20 +78,19 @@ public class GamePanel implements Panel {
 
     public void stopTimer() {
         if (gameTimer != null) {
-            gameTimer.stop(); 
+            gameTimer.stop();  // Stop the game timer
         }
-        running = false; 
+        running = false; // Set running flag to false
         if (timerUpdaterThread != null) {
-            timerUpdaterThread.interrupt(); 
+            timerUpdaterThread.interrupt();  // Interrupt the timer updater thread
         }
     }
 
     public int getFinalTime() {
-        return gameTimer.getTimeInSeconds(); 
+        return gameTimer.getTimeInSeconds(); // Return final time in seconds
     }
 
-    
     private void cardButtonClicked(ActionEvent e) {
-        
+        // Handle card button click event here
     }
 }
