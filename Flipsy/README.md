@@ -7,7 +7,7 @@
           ├── core/                 # Berisi class inti game
           │   ├── Game.java         # Class untuk mengatur aturan game
           │   ├── Card.java         # Class untuk representasi kartu
-          │   ├── Timer.java        # Class untuk timer game
+          │   ├── GameTimer.java        # Class untuk timer game
           │   └── Board.java        # Class untuk logika board game
           │
           ├── ui/                   # Berisi elemen GUI
