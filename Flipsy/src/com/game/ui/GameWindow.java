@@ -40,6 +40,17 @@ public class GameWindow extends JFrame {
         cardLayout.show(mainPanel, "GamePanel");
     }
 
+    public void startGame() {
+        gamePanel.startGame();
+        cardLayout.show(mainPanel, "GamePanel");
+    }
+    
+
+    public void endGame() {
+        gamePanel.stopTimer();
+        System.out.println("Final Time: " + gamePanel.getFinalTime() + " seconds");
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GameWindow::new);
     }
