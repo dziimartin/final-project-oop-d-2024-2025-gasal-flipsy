@@ -86,7 +86,8 @@ public class MainMenu implements Panel {
             if (playerName.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Masukkan nama Anda!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             } else {
-                gameWindow.showGamePanel();
+                gameWindow.startGame(); // Memulai permainan
+                gameWindow.showGamePanel(); // Menampilkan panel permainan setelah nama dimasukkan
             }
         });
 
