@@ -12,7 +12,7 @@ public class GamePanel implements Panel {
     private boolean running; // Flag untuk menghentikan thread
 
     public GamePanel() {
-        this.gameTimer = new GameTimer(); // Inisialisasi GameTimer
+        this.gameTimer = new GameTimer(); 
     }
 
     @Override
@@ -23,7 +23,7 @@ public class GamePanel implements Panel {
 
         // Panel atas untuk timer
         JPanel topPanel = new JPanel();
-        timerLabel = new JLabel("Time: 00:00"); // Inisialisasi timer dengan format 00:00
+        timerLabel = new JLabel("Time: 00:00");
         topPanel.add(timerLabel);
         gamePanel.add(topPanel, BorderLayout.NORTH);
 
@@ -44,8 +44,8 @@ public class GamePanel implements Panel {
     }
 
     public void startGame() {
-        gameTimer.start();  // Start the timer in GameTimer
-        startTimerUpdater(); // Start the timer update thread
+        gameTimer.start();  
+        startTimerUpdater(); 
     }
 
     public void stopGame() {
@@ -57,16 +57,15 @@ public class GamePanel implements Panel {
         // Menginisialisasi flag dan memulai thread updater
         running = true;
         timerUpdaterThread = new Thread(() -> {
-            while (running && !Thread.currentThread().isInterrupted()) { // Menambahkan pengecekan interrupt
+            while (running && !Thread.currentThread().isInterrupted()) { 
                 SwingUtilities.invokeLater(() -> {
-                    // Update label timer di Swing thread
                     int minutes = gameTimer.getTimeInSeconds() / 60;
                     int seconds = gameTimer.getTimeInSeconds() % 60;
                     String formattedTime = String.format("%02d:%02d", minutes, seconds);
-                    timerLabel.setText("Time: " + formattedTime); // Update label dengan format mm:ss
+                    timerLabel.setText("Time: " + formattedTime); 
                 });
                 try {
-                    Thread.sleep(1000); // Update setiap detik
+                    Thread.sleep(1000); 
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
@@ -78,16 +77,16 @@ public class GamePanel implements Panel {
 
     public void stopTimer() {
         if (gameTimer != null) {
-            gameTimer.stop();  // Stop the game timer
+            gameTimer.stop(); 
         }
-        running = false; // Set running flag to false
+        running = false; 
         if (timerUpdaterThread != null) {
-            timerUpdaterThread.interrupt();  // Interrupt the timer updater thread
+            timerUpdaterThread.interrupt();  
         }
     }
 
     public int getFinalTime() {
-        return gameTimer.getTimeInSeconds(); // Return final time in seconds
+        return gameTimer.getTimeInSeconds(); 
     }
 
     private void cardButtonClicked(ActionEvent e) {
