@@ -34,7 +34,7 @@ public class MainMenu implements Panel {
 
         // Logo game
         JLabel logoLabel = new JLabel();
-        ImageIcon logoIcon = new ImageIcon("E:/PBOFP/Flipsy/src/img/logo.png");
+        ImageIcon logoIcon = new ImageIcon(getClass().getClassLoader().getResource("img/logo.png"));
         Image scaledLogo = logoIcon.getImage().getScaledInstance(240, 240, Image.SCALE_SMOOTH);
         logoLabel.setIcon(new ImageIcon(scaledLogo));
         logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
