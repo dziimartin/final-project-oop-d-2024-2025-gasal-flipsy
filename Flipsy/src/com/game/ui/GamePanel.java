@@ -1,77 +1,157 @@
 package com.game.ui;
 
+import com.game.core.Card;
 import com.game.core.GameTimer;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class GamePanel implements Panel {
-    private GameTimer gameTimer; 
-    private JLabel timerLabel; 
-    private Thread timerUpdaterThread; // Thread untuk update GUI
-    private boolean running; // Flag untuk menghentikan thread
+    private JPanel boardPanel;
+    private JLabel timerLabel;
+    private GameTimer gameTimer;
+    private Thread timerUpdaterThread;
+    private ArrayList<Card> cards;
+    private Card firstSelected;
+    private Card secondSelected;
+    private boolean isProcessing;
 
     public GamePanel() {
-        this.gameTimer = new GameTimer(); 
+        this.gameTimer = new GameTimer();
+        this.cards = new ArrayList<>();
+        this.isProcessing = false;
     }
 
     @Override
     public JPanel createPanel() {
-        // Panel utama dengan BorderLayout
+        // Panel utama dengan layout vertikal
         JPanel gamePanel = new JPanel();
-        gamePanel.setLayout(new BorderLayout());
+        gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
 
         // Panel atas untuk timer
         JPanel topPanel = new JPanel();
-        timerLabel = new JLabel("Time: 00:00"); 
+        timerLabel = new JLabel("Time: 00:00");
         topPanel.add(timerLabel);
-        gamePanel.add(topPanel, BorderLayout.NORTH);
+        gamePanel.add(topPanel);
 
-        JPanel cardGrid = new JPanel();
-        cardGrid.setLayout(new GridLayout(4, 4, 10, 10)); // 4x4 grid layout dengan gap 10px
+        // Panel grid untuk kartu
+        boardPanel = new JPanel();
+        boardPanel.setLayout(new GridLayout(4, 4, 5, 5)); // 4x4 grid
+        gamePanel.add(boardPanel);
 
-        // Add placeholder cards (as buttons)
-        for (int i = 1; i <= 16; i++) {
-            JButton cardButton = new JButton("?");
-            cardButton.setFont(new Font("Arial", Font.BOLD, 20));
-            cardButton.addActionListener(this::cardButtonClicked);
-            cardGrid.add(cardButton);
-        }
-
-        gamePanel.add(cardGrid, BorderLayout.CENTER);
-
+        initializeCards();
         return gamePanel;
     }
 
     public void startGame() {
-        gameTimer.start();  
-        startTimerUpdater(); 
+        initializeCards();
+        gameTimer.start();
+        startTimerUpdater();
     }
 
-    public void startTimerUpdater() {
-        // Menginisialisasi flag dan memulai thread updater
-        running = true;
+    private void initializeCards() {
+        cards.clear();
+        boardPanel.removeAll();
+        
+        // Load gambar kartu (gambar depan)
+        ArrayList<ImageIcon> images = loadCardImages();
+        images.addAll(images);  // Duplikasi gambar untuk pasangan kartu
+        Collections.shuffle(images);
+        
+        // Hanya tampilkan 16 kartu, grid 4x4
+        images = new ArrayList<>(images.subList(0, 16)); // Ambil 16 kartu pertama
+        
+        // Gambar belakang kartu (gunakan gambar belakang yang baru)
+        ImageIcon backImage = new ImageIcon("C:/Users/LENOVO/Documents/PBO D/Final projek/final-project-oop-d-2024-2025-gasal-flipsy/Flipsy/src/img/Backcard.jpg");
+        
+        // Buat kartu
+        for (ImageIcon image : images) {
+            // Kartu dimulai dengan gambar depan, sebelum dibalik menjadi gambar belakang
+            Card card = new Card(image, backImage);  // Card menerima frontImage (gambar depan) dan backImage (gambar belakang)
+            card.setPreferredSize(new Dimension(100, 100)); // Ukuran tetap untuk kartu
+            card.addActionListener(e -> handleCardClick(card));
+            cards.add(card);
+            boardPanel.add(card);
+        }
+        
+        boardPanel.revalidate();
+        boardPanel.repaint();
+    }    
+    
+    private ArrayList<ImageIcon> loadCardImages() {
+        ArrayList<ImageIcon> images = new ArrayList<>();
+        String basePath = "C:/Users/LENOVO/Documents/PBO D/Final projek/final-project-oop-d-2024-2025-gasal-flipsy/Flipsy/src/img/";
+        String[] imageNames = {
+                "the-emperor.png", "the-hierophant.png", "the-chariot.png",
+                "strength.png", "the-hermit.png", "wheel-of-fortune.png",
+                "justice.png", "death.png", "temperance.png", "devil.png",
+                "the-tower.png", "the-star.png", "the-moon.png",
+                "the-sun.png", "judgement.png", "the-world.png"
+        };
+
+        for (String name : imageNames) {
+            images.add(new ImageIcon(basePath + name));
+        }
+        return images;
+    }
+
+    private void handleCardClick(Card card) {
+        if (isProcessing || card.isFlipped() || card.isMatched()) return;
+
+        card.flip(); // Tampilkan gambar depan
+
+        if (firstSelected == null) {
+            firstSelected = card;
+        } else if (secondSelected == null) {
+            secondSelected = card;
+            checkMatch();
+        }
+    }
+
+    private void checkMatch() {
+        isProcessing = true;
+    
+        if (firstSelected.getFrontImage().equals(secondSelected.getFrontImage())) {
+            // Jika kartu cocok
+            firstSelected.setMatched();
+            secondSelected.setMatched();
+            resetSelection(); // Reset pilihan setelah mencocokkan
+        } else {
+            // Jika kartu tidak cocok, beri sedikit waktu sebelum membalik
+            Timer timer = new Timer(500, e -> {
+                firstSelected.flip();
+                secondSelected.flip();
+                resetSelection();
+            });
+            timer.setRepeats(false);
+            timer.start();
+        }
+    }
+    
+    private void resetSelection() {
+        firstSelected = null;
+        secondSelected = null;
+        isProcessing = false;
+    }
+
+    private void startTimerUpdater() {
         timerUpdaterThread = new Thread(() -> {
-            while (running && !Thread.currentThread().isInterrupted()) { 
+            while (!Thread.currentThread().isInterrupted()) {
                 SwingUtilities.invokeLater(() -> {
-                    // Update label timer di Swing thread
                     int minutes = gameTimer.getTimeInSeconds() / 60;
                     int seconds = gameTimer.getTimeInSeconds() % 60;
-                    String formattedTime = String.format("%02d:%02d", minutes, seconds);
-                    timerLabel.setText("Time: " + formattedTime); 
+                    timerLabel.setText(String.format("Time: %02d:%02d", minutes, seconds));
                 });
+
                 try {
-                    Thread.sleep(1000); 
-                } catch (InterruptedException e) {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
-                    break;
                 }
             }
         });
         timerUpdaterThread.start();
-    }
-
-    private void cardButtonClicked(ActionEvent e) {
-        // Handle card button click event here
     }
 }

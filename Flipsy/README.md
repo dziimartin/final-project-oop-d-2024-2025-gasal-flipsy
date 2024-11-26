@@ -35,6 +35,12 @@
    The board and timer, card has not been added
    ![image](https://github.com/user-attachments/assets/2f7faf37-cb4c-45de-b907-cb0ca7170857)
 
+   card when not flip
+   
+
+   card when flipped
+
+
 
 
 
