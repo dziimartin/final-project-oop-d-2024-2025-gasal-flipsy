@@ -63,12 +63,15 @@ public class GamePanel implements Panel {
         // Hanya tampilkan 16 kartu, grid 4x4
         images = new ArrayList<>(images.subList(0, 16)); // Ambil 16 kartu pertama
         
-        // Gambar belakang kartu (gunakan gambar belakang yang baru)
-        ImageIcon backImage = new ImageIcon("C:/Users/LENOVO/Documents/PBO D/Final projek/final-project-oop-d-2024-2025-gasal-flipsy/Flipsy/src/img/Backcard.jpg");
+        // Gambar belakang kartu (gunakan pendekatan dinamis)
+        ImageIcon backImage = new ImageIcon(getClass().getClassLoader().getResource("img/Backcard.jpg"));
+        if (backImage == null) {
+            System.err.println("Back card image is missing. Cannot initialize the game.");
+            return;
+        }
         
         // Buat kartu
         for (ImageIcon image : images) {
-            // Kartu dimulai dengan gambar depan, sebelum dibalik menjadi gambar belakang
             Card card = new Card(image, backImage);  // Card menerima frontImage (gambar depan) dan backImage (gambar belakang)
             card.setPreferredSize(new Dimension(100, 100)); // Ukuran tetap untuk kartu
             card.addActionListener(e -> handleCardClick(card));
@@ -82,20 +85,24 @@ public class GamePanel implements Panel {
     
     private ArrayList<ImageIcon> loadCardImages() {
         ArrayList<ImageIcon> images = new ArrayList<>();
-        String basePath = "C:/Users/LENOVO/Documents/PBO D/Final projek/final-project-oop-d-2024-2025-gasal-flipsy/Flipsy/src/img/";
         String[] imageNames = {
-                "the-emperor.png", "the-hierophant.png", "the-chariot.png",
-                "strength.png", "the-hermit.png", "wheel-of-fortune.png",
-                "justice.png", "death.png", "temperance.png", "devil.png",
-                "the-tower.png", "the-star.png", "the-moon.png",
-                "the-sun.png", "judgement.png", "the-world.png"
+            "the-emperor.png", "the-hierophant.png", "the-chariot.png",
+            "strength.png", "the-hermit.png", "wheel-of-fortune.png",
+            "justice.png", "death.png", "temperance.png", "devil.png",
+            "the-tower.png", "the-star.png", "the-moon.png",
+            "the-sun.png", "judgement.png", "the-world.png"
         };
-
+    
         for (String name : imageNames) {
-            images.add(new ImageIcon(basePath + name));
+            ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("img/" + name));
+            if (image != null) {
+                images.add(image);
+            } else {
+                System.err.println("Image not found: img/" + name);
+            }
         }
         return images;
-    }
+    }    
 
     private void handleCardClick(Card card) {
         if (isProcessing || card.isFlipped() || card.isMatched()) return;
