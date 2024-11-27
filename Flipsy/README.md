@@ -36,9 +36,12 @@
    ![image](https://github.com/user-attachments/assets/2f7faf37-cb4c-45de-b907-cb0ca7170857)
 
    card when not flip
-   
+   ![WhatsApp Image 2024-11-26 at 22 24 26_52b3ea1d](https://github.com/user-attachments/assets/6e73c2c1-228e-4455-b394-be513403400b)
+
 
    card when flipped
+   ![WhatsApp Image 2024-11-26 at 22 25 16_b119b504](https://github.com/user-attachments/assets/211d2893-2317-46b2-9559-9265b6c5ee88)
+
 
 
 
