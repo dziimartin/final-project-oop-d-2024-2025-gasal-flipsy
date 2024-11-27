@@ -88,9 +88,7 @@ public class GamePanel implements Panel {
         String[] imageNames = {
             "the-emperor.png", "the-hierophant.png", "the-chariot.png",
             "strength.png", "the-hermit.png", "wheel-of-fortune.png",
-            "justice.png", "death.png", "temperance.png", "devil.png",
-            "the-tower.png", "the-star.png", "the-moon.png",
-            "the-sun.png", "judgement.png", "the-world.png"
+            "justice.png", "death.png"
         };
     
         for (String name : imageNames) {
