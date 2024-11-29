@@ -1,27 +1,21 @@
 package com.game.ui;
 
-import com.game.core.Card;
+import com.game.core.Board;
 import com.game.core.GameTimer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class GamePanel implements Panel {
     private JPanel boardPanel;
     private JLabel timerLabel;
     private GameTimer gameTimer;
     private Thread timerUpdaterThread;
-    private ArrayList<Card> cards;
-    private Card firstSelected;
-    private Card secondSelected;
-    private boolean isProcessing;
+    private final Board board;
 
     public GamePanel() {
         this.gameTimer = new GameTimer();
-        this.cards = new ArrayList<>();
-        this.isProcessing = false;
+        this.board = new Board();
     }
 
     @Override
@@ -38,107 +32,25 @@ public class GamePanel implements Panel {
 
         // Panel grid untuk kartu
         boardPanel = new JPanel();
-        boardPanel.setLayout(new GridLayout(4, 4, 5, 5)); // 4x4 grid
+        boardPanel.setLayout(new GridLayout(4, 4, 5, 5));
+        boardPanel.setPreferredSize(new Dimension(450, 600));
+        boardPanel.setMaximumSize(new Dimension(450, 600));
         gamePanel.add(boardPanel);
 
-        initializeCards();
+        // Pusatkan grid
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
+        centerPanel.add(boardPanel);
+        gamePanel.add(centerPanel);
+
+        board.initializeCards(boardPanel);
         return gamePanel;
     }
 
     public void startGame() {
-        initializeCards();
+        board.initializeCards(boardPanel);
         gameTimer.start();
         startTimerUpdater();
-    }
-
-    private void initializeCards() {
-        cards.clear();
-        boardPanel.removeAll();
-        
-        // Load gambar kartu (gambar depan)
-        ArrayList<ImageIcon> images = loadCardImages();
-        images.addAll(images);  // Duplikasi gambar untuk pasangan kartu
-        Collections.shuffle(images);
-        
-        // Hanya tampilkan 16 kartu, grid 4x4
-        images = new ArrayList<>(images.subList(0, 16)); // Ambil 16 kartu pertama
-        
-        // Gambar belakang kartu (gunakan pendekatan dinamis)
-        ImageIcon backImage = new ImageIcon(getClass().getClassLoader().getResource("img/Backcard.jpg"));
-        if (backImage == null) {
-            System.err.println("Back card image is missing. Cannot initialize the game.");
-            return;
-        }
-        
-        // Buat kartu
-        for (ImageIcon image : images) {
-            Card card = new Card(image, backImage);  // Card menerima frontImage (gambar depan) dan backImage (gambar belakang)
-            card.setPreferredSize(new Dimension(100, 100)); // Ukuran tetap untuk kartu
-            card.addActionListener(e -> handleCardClick(card));
-            cards.add(card);
-            boardPanel.add(card);
-        }
-        
-        boardPanel.revalidate();
-        boardPanel.repaint();
-    }    
-    
-    private ArrayList<ImageIcon> loadCardImages() {
-        ArrayList<ImageIcon> images = new ArrayList<>();
-        String[] imageNames = {
-            "the-emperor.png", "the-hierophant.png", "the-chariot.png",
-            "strength.png", "the-hermit.png", "wheel-of-fortune.png",
-            "justice.png", "death.png"
-        };
-    
-        for (String name : imageNames) {
-            ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("img/" + name));
-            if (image != null) {
-                images.add(image);
-            } else {
-                System.err.println("Image not found: img/" + name);
-            }
-        }
-        return images;
-    }    
-
-    private void handleCardClick(Card card) {
-        if (isProcessing || card.isFlipped() || card.isMatched()) return;
-
-        card.flip(); // Tampilkan gambar depan
-
-        if (firstSelected == null) {
-            firstSelected = card;
-        } else if (secondSelected == null) {
-            secondSelected = card;
-            checkMatch();
-        }
-    }
-
-    private void checkMatch() {
-        isProcessing = true;
-    
-        if (firstSelected.getFrontImage().equals(secondSelected.getFrontImage())) {
-            // Jika kartu cocok
-            firstSelected.setMatched();
-            secondSelected.setMatched();
-            resetSelection(); // Reset pilihan setelah mencocokkan
-        } else {
-            // Jika kartu tidak cocok, beri sedikit waktu sebelum membalik
-            Timer timer = new Timer(500, e -> {
-                firstSelected.flip();
-                secondSelected.flip();
-                resetSelection();
-            });
-            timer.setRepeats(false);
-            timer.start();
-        }
-    }
-    
-    private void resetSelection() {
-        firstSelected = null;
-        secondSelected = null;
-        isProcessing = false;
     }
 
     private void startTimerUpdater() {
