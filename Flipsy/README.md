@@ -1,23 +1,36 @@
 ## Update Progress
 ### Folder Structure Plan
 ```
-  src/
-  └── com/
-      └── game/
-          ├── core/                 # Berisi class inti game
-          │   ├── Game.java         # Class untuk mengatur aturan game
-          │   ├── Card.java         # Class untuk representasi kartu
-          │   ├── GameTimer.java    # Class untuk timer game
-          │   └── Board.java        # Class untuk logika board game
-          │
-          ├── ui/                   # Berisi elemen GUI
-          │   ├── GameWindow.java   # Main window class
-          │   ├── MainMenu.java     # Class untuk layar menu utama
-          │   ├── GamePanel.java    # Class untuk layar permainan
-          │   └── Panel.java        # Interface untuk panel GUI
-          │
-          └── utils/                # Berisi kelas utility/helper
-              └── GameUtils.java    # Helper class (opsional)
+src/
+└── com/
+    └── game/
+        ├── core/                 # Komponen inti game
+        │   ├── Card.java         # Representasi kartu
+        │   ├── Board.java        # Logika board game
+        │   ├── GameTimer.java    # Timer untuk game
+        │   └── Game.java         # Aturan utama game
+        │
+        ├── ui/                   # Elemen GUI
+        │   ├── GameWindow.java   # Jendela utama
+        │   ├── MainMenu.java     # Menu utama
+        │   ├── GamePanel.java    # Panel permainan
+        │   └── Panel.java        # Interface untuk panel GUI
+        │
+        ├── achievements/         # Sistem pencapaian
+        │   ├── Achievement.java  # Abstraksi pencapaian
+        │   ├── AchievementEvent.java  # Event untuk pencapaian
+        │   ├── AchievementManager.java # Mengelola pencapaian
+        │   ├── ChampionAchievement.java  # Pencapaian Champion
+        │   ├── EinsteinAchievement.java  # Pencapaian Einstein
+        │   ├── TurboAchievement.java     # Pencapaian Turbo
+        │   └── AchievementListener.java  # Interface Listener
+        │
+        ├── services/             # Layanan utilitas
+        │   ├── SaveLoadService.java # Layanan untuk menyimpan/memuat game
+        │   └── GameUtils.java    # Utilitas umum (opsional)
+        │
+        └── App.java              # Entry point aplikasi
+
 ```
 
 
