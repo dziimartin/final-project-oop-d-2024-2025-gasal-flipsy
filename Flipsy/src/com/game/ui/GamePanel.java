@@ -10,12 +10,9 @@ import javax.swing.*;
 public class GamePanel implements Panel {
     private JPanel boardPanel;
     private JLabel timerLabel;
-    private JLabel scoreLabel;    // Label untuk menampilkan skor
-    private JLabel levelLabel;    // Label untuk menampilkan level
     private GameTimer gameTimer;
     private Thread timerUpdaterThread;
     private final Board board;
-    private final Game game;
 
     public GamePanel() {
         this.gameTimer = new GameTimer();
