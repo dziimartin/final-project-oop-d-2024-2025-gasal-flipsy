@@ -30,11 +30,6 @@ public class Game {
         }
     }
 
-    // Mengatur listener untuk kartu cocok
-    public void setOnCardMatchListener(Runnable listener) {
-        this.onCardMatch = listener;
-    }
-
     // Getters untuk atribut
     public int getCurrentLevel() {
         return currentLevel;

@@ -15,19 +15,20 @@ public class GamePanel implements Panel {
     private GameTimer gameTimer;
     private Thread timerUpdaterThread;
     private final Board board;
-    private final Game game;
+    private Game game;
 
     public GamePanel() {
         this.gameTimer = new GameTimer();
         this.board = new Board();
         this.game = new Game();
+        this.board.setGame(game);
     }
 
     @Override
     public JPanel createPanel() {
         JPanel gamePanel = new JPanel();
         gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
-
+        
         // Panel atas untuk informasi permainan
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridLayout(1, 3, 10, 0)); 
@@ -90,7 +91,7 @@ public class GamePanel implements Panel {
 
     private void handleCardMatch(Card firstSelected, Card secondSelected) {
         if (firstSelected.isMatched() && secondSelected.isMatched()) {
-            game.increaseScore(10); // Tambah skor setiap kali kartu cocok
+            game.increaseScore(100); // Tambah skor setiap kali kartu cocok
             updateGameStatus();
         }
     }

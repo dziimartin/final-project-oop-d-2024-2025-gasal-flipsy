@@ -4,15 +4,21 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+
 public class Board {
     private final ArrayList<Card> cards;
     private Card firstSelected;
     private Card secondSelected;
     private boolean isProcessing;
+    private Game game; 
 
     public Board() {
         this.cards = new ArrayList<>();
         this.isProcessing = false;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     public void initializeCards(JPanel boardPanel) {
@@ -80,6 +86,10 @@ public class Board {
             // Jika kartu cocok
             firstSelected.setMatched();
             secondSelected.setMatched();
+            if (game != null) {
+                game.increaseScore(100); // Panggil skor setiap kali kartu cocok
+            }
+            
             resetSelection();
         } else {
             // Jika kartu tidak cocok, beri sedikit waktu sebelum membalik

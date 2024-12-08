@@ -57,4 +57,12 @@ public class GameTimer {
     public interface TimerListener {
         void onTimeUpdate(int seconds);
     }
+
+    public void stop() {
+        if (isRunning && timer != null) {
+            timer.cancel();
+            isRunning = false;
+        }
+    }
+    
 }
