@@ -21,6 +21,10 @@ public class GamePanel implements Panel {
         this.gameTimer = new GameTimer();
         this.board = new Board();
         this.game = new Game();
+
+        // Mengatur callback ketika kartu cocok
+        this.game.setOnCardMatch(() -> SwingUtilities.invokeLater(this::checkLevelCompletion));
+
         this.board.setGame(game);
     }
 
@@ -43,7 +47,7 @@ public class GamePanel implements Panel {
 
         // Panel grid untuk kartu
         boardPanel = new JPanel();
-        boardPanel.setLayout(new GridLayout(4, 4, 5, 5));
+        boardPanel.setLayout(new GridLayout(4, 4, 5, 5)); // Grid dinamis akan diperbarui di board
         boardPanel.setPreferredSize(new Dimension(450, 600));
         gamePanel.add(boardPanel);
 
@@ -87,6 +91,15 @@ public class GamePanel implements Panel {
             }
         });
         timerUpdaterThread.start();
+    }
+
+    private void checkLevelCompletion() {
+        if (board.isLevelComplete()) {
+            JOptionPane.showMessageDialog(boardPanel, "Level Complete!");
+            game.nextLevel(); // Pindah ke level berikutnya
+            board.initializeCards(boardPanel); // Reset kartu untuk level baru
+            updateGameStatus();
+        }
     }
 
     private void handleCardMatch(Card firstSelected, Card secondSelected) {

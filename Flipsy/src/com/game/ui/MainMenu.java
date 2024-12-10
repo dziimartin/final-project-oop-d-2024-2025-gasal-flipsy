@@ -76,7 +76,7 @@ public class MainMenu implements Panel {
         bottomPanel.setLayout(new GridLayout(1, 2, 20, 0));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 40, 40));
 
-        JButton startButton = new JButton("Mulai Permainan");
+        JButton startButton = new JButton("Start");
         startButton.setFont(new Font("Comic Sans MS", Font.BOLD, 18));
         startButton.setBackground(new Color(233, 107, 222));
         startButton.setForeground(Color.WHITE);
@@ -91,7 +91,7 @@ public class MainMenu implements Panel {
             }
         });
 
-        JButton exitButton = new JButton("Keluar");
+        JButton exitButton = new JButton("Quit");
         exitButton.setFont(new Font("Comic Sans MS", Font.BOLD, 18));
         exitButton.setBackground(new Color(233, 107, 222));
         exitButton.setForeground(Color.WHITE);

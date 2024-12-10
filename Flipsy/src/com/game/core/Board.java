@@ -4,13 +4,12 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
-
 public class Board {
     private final ArrayList<Card> cards;
     private Card firstSelected;
     private Card secondSelected;
     private boolean isProcessing;
-    private Game game; 
+    private Game game;
 
     public Board() {
         this.cards = new ArrayList<>();
@@ -25,22 +24,17 @@ public class Board {
         cards.clear();
         boardPanel.removeAll();
 
-        // Load gambar kartu (gambar depan)
         ArrayList<ImageIcon> images = loadCardImages();
-        images.addAll(images);  // Duplikasi gambar untuk pasangan kartu
+        images.addAll(images); // Duplikasi untuk pasangan kartu
         Collections.shuffle(images);
+        images = new ArrayList<>(images.subList(0, 16)); // Batasi hingga 16 kartu
 
-        // Hanya tampilkan 16 kartu, grid 4x4
-        images = new ArrayList<>(images.subList(0, 16)); // Ambil 16 kartu pertama
-
-        // Gambar belakang kartu
         ImageIcon backImage = new ImageIcon(getClass().getClassLoader().getResource("img/Backcard.jpg"));
 
-        // Buat kartu
         for (ImageIcon image : images) {
-            Card card = new Card(image, backImage); 
+            Card card = new Card(image, backImage);
             card.setPreferredSize(new java.awt.Dimension(100, 150));
-            card.addActionListener(e -> handleCardClick(card, boardPanel));
+            card.addActionListener(e -> handleCardClick(card));
             cards.add(card);
             boardPanel.add(card);
         }
@@ -66,33 +60,29 @@ public class Board {
         return images;
     }
 
-    private void handleCardClick(Card card, JPanel boardPanel) {
+    private void handleCardClick(Card card) {
         if (isProcessing || card.isFlipped() || card.isMatched()) return;
 
-        card.flip(); // Tampilkan gambar depan
-
+        card.flip();
         if (firstSelected == null) {
             firstSelected = card;
-        } else if (secondSelected == null) {
+        } else {
             secondSelected = card;
-            checkMatch(boardPanel);
+            checkMatch();
         }
     }
 
-    private void checkMatch(JPanel boardPanel) {
+    private void checkMatch() {
         isProcessing = true;
 
         if (firstSelected.getFrontImage().equals(secondSelected.getFrontImage())) {
-            // Jika kartu cocok
             firstSelected.setMatched();
             secondSelected.setMatched();
             if (game != null) {
-                game.increaseScore(100); // Panggil skor setiap kali kartu cocok
+                game.increaseScore(100);
             }
-            
             resetSelection();
         } else {
-            // Jika kartu tidak cocok, beri sedikit waktu sebelum membalik
             Timer timer = new Timer(500, e -> {
                 firstSelected.flip();
                 secondSelected.flip();
@@ -107,5 +97,9 @@ public class Board {
         firstSelected = null;
         secondSelected = null;
         isProcessing = false;
+    }
+
+    public boolean isLevelComplete() {
+        return cards.stream().allMatch(Card::isMatched);
     }
 }
