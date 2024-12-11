@@ -167,8 +167,12 @@ public class Turbo extends Achievement {
 ```
 
 ## 5. Screenshot dan Demo
-* **Screenshot 1**: [Deskripsi]
-* **Screenshot 2**: [Deskripsi]
+* **Screenshot 1**: Turbo Achievement didapatkan jika menyelesaikan level sebelum waktu yang ditentukan
+  ![Screenshot 2024-12-11 153734](https://github.com/user-attachments/assets/8ff987e8-d278-449b-8707-9a0013716b8b)
+* **Screenshot 2**: Einstein  Achievement didapatkan jika menyelesaikan level dengan kesalahan >50
+  ![Screenshot 2024-12-11 153742](https://github.com/user-attachments/assets/6087466a-c109-44ad-a0b3-baf552b1ce14)
+* **Screenshot 3**: Champion  Achievement didapatkan jika telah menyelesaikan semua level (3 level)
+  ![Screenshot 2024-12-11 154025](https://github.com/user-attachments/assets/4505bed1-cb07-476e-a7e0-274cbc3d4cd0)
 * **Link Demo Video**: [URL]
 
 ## 6. Panduan Instalasi dan Menjalankan Game
